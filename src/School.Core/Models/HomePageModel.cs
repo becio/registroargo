@@ -51,7 +51,7 @@ namespace School.Core.Models
                 new KeyValuePair<string, string>("BackbaseClientDelta", "[evt=menu-serviziclasse:_idJsp25|event|submit][att=_idJsp24|selected|true][att=_idJsp45|selected|false]")
             });
 
-            var ret = await _httpClient.PostAsync(LoginModel.homeUrl, content);
+            var ret = await _httpClient.PostAsync(LoginPageModel.homeUrl, content);
             ret.EnsureSuccessStatusCode();
 
             var html = await ret.Content.ReadAsStringAsync();
@@ -63,7 +63,7 @@ namespace School.Core.Models
             var content = new FormUrlEncodedContent(new[]{
                 new KeyValuePair<string, string>("BackbaseClientDelta", "[evt=bacheca|event|submit|]")
             });
-            var ret = await _httpClient.PostAsync(LoginModel.homeUrl, content);
+            var ret = await _httpClient.PostAsync(LoginPageModel.homeUrl, content);
             ret.EnsureSuccessStatusCode();
 
             var html = await ret.Content.ReadAsStringAsync();
@@ -71,7 +71,7 @@ namespace School.Core.Models
                 new KeyValuePair<string, string>("BackbaseClientDelta", "[evt=sheet-bacheca:tree|event|custom|param1||param2||param3||param4||param5|]")
             });
 
-            ret = await _httpClient.PostAsync(LoginModel.homeUrl, content);
+            ret = await _httpClient.PostAsync(LoginPageModel.homeUrl, content);
             ret.EnsureSuccessStatusCode();
             html = await ret.Content.ReadAsStringAsync();
             return new BulletinBoardModel(_httpClient, html);
@@ -90,7 +90,7 @@ namespace School.Core.Models
             var content = new FormUrlEncodedContent(new[]{
                 new KeyValuePair<string, string>("BackbaseClientDelta", $"[evt=_idJsp73|event|row-selected|rowIndex|{idx}][att=_idJsp73|selectedIndexes|{idx}]")
             });
-            var ret = await _httpClient.PostAsync(LoginModel.homeUrl, content);
+            var ret = await _httpClient.PostAsync(LoginPageModel.homeUrl, content);
             ret.EnsureSuccessStatusCode();
             var html = await ret.Content.ReadAsStringAsync();
 

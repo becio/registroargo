@@ -30,7 +30,7 @@ namespace School.Core.Models
             });
             content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-www-form-urlencoded; charset=UTF-8");
             _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://www.portaleargo.it/argoweb/famiglia/index.jsf");
-            var ret = await _httpClient.PostAsync(LoginModel.homeUrl, content);
+            var ret = await _httpClient.PostAsync(LoginPageModel.homeUrl, content);
             ret.EnsureSuccessStatusCode();
 
             var html = await ret.Content.ReadAsStringAsync();

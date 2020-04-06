@@ -24,7 +24,7 @@ namespace School.Core.Models
                 new KeyValuePair<string, string>("BackbaseClientDelta", "[evt=sheet-bacheca:tree:scuola|event|select][att=sheet-bacheca:tree:scuola|selected|true]")
             });
 
-            var ret = await _httpClient.PostAsync(LoginModel.homeUrl, content);
+            var ret = await _httpClient.PostAsync(LoginPageModel.homeUrl, content);
             ret.EnsureSuccessStatusCode();
 
             var html = await ret.Content.ReadAsStringAsync();
