@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 
 namespace School.Core.Models
@@ -33,17 +34,28 @@ namespace School.Core.Models
 
                 var trs = field.Descendants("tr");
                 var lines = new List<TaskLine>();
-                foreach(var tr in trs)
+                TaskLine line = null;
+                foreach (var tr in trs)
                 {
                     var tdMatter = tr.SelectSingleNode("td[1]");
                     var tdJob = tr.SelectSingleNode("td[2]");
 
-                    var line = new TaskLine
+                    var schoolMatter = tdMatter.InnerText.Clean();
+                    
+                    if (!string.IsNullOrWhiteSpace(schoolMatter))
                     {
-                        SchoolMatter = tdMatter.InnerText.Clean(),
-                        Description = tdJob.InnerText.Clean()
-                    };
-                    lines.Add(line);
+                        line = new TaskLine
+                        {
+                            SchoolMatter = schoolMatter,
+                            Description = tdJob.InnerText.Clean()
+                        };
+                        lines.Add(line);
+                    } 
+                    else
+                    {
+                        Debug.Assert(line != null);
+                        line.Description += Environment.NewLine + tdJob.InnerText.Clean();
+                    }
                 }
                 job.Tasks = lines.ToArray();
 
