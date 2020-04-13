@@ -10,8 +10,15 @@ namespace School.Core.Models
     public class HomePageModel
     {
         #region fields & consts
-        public const string SupportedVersion = "Versione 3.6.0";
-        const string StudentsContainerId = "_idJsp72";
+        public const string SupportedVersion = "Versione 3.6.1";
+        const string StudentsContainerId = "_idJsp75_wrapper";
+        const string StudentNameId = "_idJsp72";    // span id nome studente
+        const string ClassNameId = "_idJsp84";      // span id nome classe
+        const string VersionId = "_idJsp104";       // span id nome versione
+        const string SwitchStudentId = "_idJsp75";  // div id per attivare switch studente
+        const string AssignedTasksId = "_idJsp27";  // \
+        const string AssignedTasks2Id = "_idJsp26"; //  -> ids associati ai compiti assegnati
+        const string AssignedTasks3Id = "_idJsp5";  // /
 
         readonly HttpClient _httpClient;
         readonly HtmlDocument _htmlDocument;
@@ -28,7 +35,7 @@ namespace School.Core.Models
 
         public string[] AvailableStudents => _students ?? (_students = ParseStudents());
 
-        public string Version => _htmlDocument.GetElementbyId("_idJsp102")?.InnerText;
+        public string Version => _htmlDocument.GetElementbyId(VersionId)?.InnerText;
         #endregion
 
         #region ctor
@@ -39,8 +46,8 @@ namespace School.Core.Models
             _htmlDocument = new HtmlDocument();
             _htmlDocument.LoadHtml(html);
 
-            _getStudent = () => _htmlDocument.GetElementbyId("_idJsp70").InnerText;
-            _getClass = () => _htmlDocument.GetElementbyId("_idJsp82").InnerText;
+            _getStudent = () => _htmlDocument.GetElementbyId(StudentNameId).InnerText.Clean();
+            _getClass = () => _htmlDocument.GetElementbyId(ClassNameId).InnerText.Clean();
         }
         #endregion
 
@@ -48,7 +55,7 @@ namespace School.Core.Models
         public async Task<HomeTasksModel> AssignedTasksAsync()
         {
             var content = new FormUrlEncodedContent(new[]{
-                new KeyValuePair<string, string>("BackbaseClientDelta", "[evt=menu-serviziclasse:_idJsp25|event|submit][att=_idJsp24|selected|true][att=_idJsp45|selected|false]")
+                new KeyValuePair<string, string>("BackbaseClientDelta", $"[evt=menu-serviziclasse:{AssignedTasksId}|event|submit][att={AssignedTasks2Id}|selected|true][att={AssignedTasks3Id}|selected|false]")
             });
 
             var ret = await _httpClient.PostAsync(LoginPageModel.homeUrl, content);
@@ -88,7 +95,7 @@ namespace School.Core.Models
             var idx = Array.IndexOf(AvailableStudents, studentName);
 
             var content = new FormUrlEncodedContent(new[]{
-                new KeyValuePair<string, string>("BackbaseClientDelta", $"[evt=_idJsp73|event|row-selected|rowIndex|{idx}][att=_idJsp73|selectedIndexes|{idx}]")
+                new KeyValuePair<string, string>("BackbaseClientDelta", $"[evt={SwitchStudentId}|event|row-selected|rowIndex|{idx}][att={SwitchStudentId}|selectedIndexes|{idx}]")
             });
             var ret = await _httpClient.PostAsync(LoginPageModel.homeUrl, content);
             ret.EnsureSuccessStatusCode();
@@ -100,10 +107,10 @@ namespace School.Core.Models
             doc.LoadHtml(html);
 
             var setTexts = doc.DocumentNode.Descendants("c:setText").ToList();
-            var setStudent = setTexts.First(n => n.Attributes["destination"].Value == "id('_idJsp70')");
-            var setClass = setTexts.First(n => n.Attributes["destination"].Value == "id('_idJsp82')");
-            var newStudentName = setStudent.Attributes["select"].Value;
-            var newClassName = setClass.Attributes["select"].Value;
+            var setStudent = setTexts.First(n => n.Attributes["destination"].Value == $"id('{StudentNameId}')");
+            var setClass = setTexts.First(n => n.Attributes["destination"].Value == $"id('{ClassNameId}')");
+            var newStudentName = setStudent.Attributes["select"].Value.Trim('\'');
+            var newClassName = setClass.Attributes["select"].Value.Trim('\'').Clean();
 
             _getStudent = () => newStudentName;
             _getClass = () => newClassName;
