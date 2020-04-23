@@ -81,7 +81,7 @@ namespace School.Core.Models
                 {
                     var linkText = secondTd.InnerText.Clean();
 
-                    var code = rowIndex + "_" + subRowIndex;
+                    var code = rowIndex + "_" + subRowIndex++;
                     
                     var file = new DownloadableFile(_httpClient, code, linkText);
                     files.Add(file);
